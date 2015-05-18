@@ -1,4 +1,8 @@
 classes
 genlib
 gensrc
-
+test-reports
+reports
+nbproject
+TESTS-TestSuites.xml
+dist
