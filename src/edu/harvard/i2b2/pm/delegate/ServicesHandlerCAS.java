@@ -15,12 +15,15 @@ import edu.harvard.i2b2.common.exception.I2B2DAOException;
 import edu.harvard.i2b2.common.exception.I2B2Exception;
 import edu.harvard.i2b2.pm.dao.PMDbDao;
 import edu.harvard.i2b2.pm.datavo.pm.UserType;
+import edu.harvard.i2b2.pm.delegate.ServicesHandler;
 import edu.harvard.i2b2.pm.ws.ServicesMessage;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * ServicesHandlerCAS validates users using
@@ -57,6 +60,9 @@ public class ServicesHandlerCAS extends ServicesHandler {
         }
     }
 
+    protected static Exception fail = new Exception("Username or password does not exist");
+
+
     public ServicesHandlerCAS(ServicesMessage servicesMsg) throws I2B2Exception{
 	super(servicesMsg);
     }
@@ -70,83 +76,37 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    return super.validateSuppliedPassword(service, ticket, param);
 	}
 
-	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "serviceValidate?"
-	    + "service=" + URLEncoder.encode(service, "UTF-8")
-	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
+
+	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "validate?"
+	    + "service=" + URLEncoder.encode(service)
+	    + "&ticket=" + URLEncoder.encode(ticket);
 	log.debug("CAS validation address: " + addr);
 
 	BufferedReader body = URLOpener.open(addr);
-        try {
-	    StringBuilder builder = new StringBuilder();
-	    String line;
-	    while ((line = body.readLine()) != null) {
-		builder.append(line);
-	    }
-	    String response = builder.toString();
-	    int start = response.indexOf("<cas:authenticationSuccess");
-	    String username;
-	    if (start > -1) {
-	    	start = response.indexOf(">", start);
-	    	if (start < 0) {
-	    	    log.error("Unexpected response from CAS: " + response);
-	    	    throw new Exception("EINTERNAL");
-	    	}
-		start += 1;
-		start = response.indexOf("<cas:user", start);
-		if (start < 0) {
-		    log.error("Unexpected response from CAS: " + response);
-		    throw new Exception("EINTERNAL");
-		} else {
-		    start = response.indexOf(">", start);
-		    if (start < 0) {
-	    	        log.error("Unexpected response from CAS: " + response);
-	    	        throw new Exception("EINTERNAL");
-	    	    }
-		    start += 1;
-		    int finish = response.indexOf("</cas:user", start);
-		    if (finish < 0) {
-			log.error("Unexpected response from CAS: " + response);
-			throw new Exception("EINTERNAL");
-		    } else {
-			username = response.substring(start, finish).trim();
-		    }
-		}
-	    } else {
-		if (response.contains("<cas:authenticationFailure")) {
-		    log.debug("CAS authentication result negative");
-		    throw new Exception("EAUTHENTICATION");
-		} else {
-		    log.error("Unexpected response from CAS: " + response);
-		    throw new Exception("EINTERNAL");
-		}
-	    }
+	if (body.readLine().equals("yes") == false){
+	    log.debug("CAS authentication result negative");
+	    throw fail;
+	}
 
-            log.debug("CAS authenticated user:" + username);
+	String username = body.readLine();
+	log.debug("CAS authenticated user:" + username);
 
-            PMDbDao pmDb = new PMDbDao();
-            List answers;
-            try {
-                answers = pmDb.getUser(username, null);
-            } catch (I2B2DAOException dberr) {
-                log.debug(dberr.toString());
-                throw new Exception("EINTERNAL");
-            }
+	PMDbDao pmDb = new PMDbDao();
+	List answers;
+	try {
+	    answers = pmDb.getUser(username, null);
+	} catch (I2B2DAOException dberr) {
+	    log.debug(dberr.toString());
+	    throw fail;
+	}
 
-            Iterator users = answers.iterator();
-            if (!users.hasNext()) {
-                log.debug("No such user record: " + username);
-                throw new Exception("EAUTHORIZATION");
-            }
-            body.close();
-            body = null;
-            return (UserType)users.next();
-        } finally {
-            if (body != null) {
-                try {
-                    body.close();
-                } catch (IOException ignore) {}
-            }
-        }
+	Iterator users = answers.iterator();
+	if (!users.hasNext()) {
+	    log.debug("No such user record: " + username);
+	    throw fail;
+	}
+
+	return (UserType)users.next();
     }
 }
 
