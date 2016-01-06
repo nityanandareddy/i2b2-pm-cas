@@ -15,6 +15,6 @@ Replace the stock project management module with this one before compiling i2b2,
 If you are installing i2b2 on a separate machine from Eureka!, create a file, `/etc/eureka/application.properties` with one line: 
 `cas.url=URL to your cas server`. This file already exists if you have already installed Eureka on the same machine.
 
-Finally, you need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using.
+Finally, you may need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using. This is especially true if the CAS server's certificate is self-signed.
 
 In order to login to i2b2 using CAS, you also need to install our patched i2b2 webclient, found at https://github.com/eurekaclinical/i2b2-webclient-cas.
