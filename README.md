@@ -12,7 +12,7 @@ Eureka! currently uses a patched copy of CAS version 3.5.2. While these i2b2 pat
 
 Replace the stock project management module with this one before compiling i2b2, and it will be built and install as usual.
 
-If you are installing i2b2 on a separate machine, create a file, `/etc/eureka/application.properties` with one line: 
+If you are installing i2b2 on a separate machine from Eureka!, create a file, `/etc/eureka/application.properties` with one line: 
 `cas.url=URL to your cas server`. This file already exists if you have already installed Eureka on the same machine.
 
 Finally, you need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using.
