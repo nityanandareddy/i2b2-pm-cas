@@ -7,7 +7,7 @@ The code is adapted from similar code for an older version of i2b2 by Dan Connol
 
 Eureka! currently uses a patched copy of CAS version 3.5.2. While these i2b2 patches have only been tested with Eureka!'s patched CAS, they likely also will work with stock CAS 3.5.2.
 
-##Installation
+## Installation
 
 Replace the stock project management module with this one before compiling i2b2, and it will be built and install as usual.
 
@@ -17,3 +17,7 @@ If you are installing i2b2 on a separate machine from Eureka!, create a file, `/
 Finally, you may need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using. This is especially true if the CAS server's certificate is self-signed.
 
 In order to login to i2b2 using CAS, you also need to install our patched i2b2 webclient, found at https://github.com/eurekaclinical/i2b2-webclient-cas.
+
+## Licensing
+
+This code is released under the i2b2 Software License version 2.1, available at https://www.i2b2.org/software/i2b2_license.html.
