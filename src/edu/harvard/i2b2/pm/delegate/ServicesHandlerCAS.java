@@ -73,20 +73,47 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    return super.validateSuppliedPassword(service, ticket, param);
 	}
 
-
-	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "validate?"
+	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "serviceValidate?"
 	    + "service=" + URLEncoder.encode(service, "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
 	log.debug("CAS validation address: " + addr);
 
 	BufferedReader body = URLOpener.open(addr);
         try {
-            if (!body.readLine().equals("yes")){
-                log.debug("CAS authentication result negative");
+	    StringBuilder builder = new StringBuilder();
+	    String line;
+	    while ((line = body.readLine()) != null) {
+		builder.append(line);
+	    }
+	    String response = builder.toString();
+	    int start = response.indexOf("<cas:authenticationSuccess>");
+	    String username;
+	    if (start > -1) {
+		start += "<cas:authenticationSuccess>".length();
+		start = response.indexOf("<cas:user>", start);
+		if (start < 0) {
+		    log.error("Unexpected response from CAS: " + response);
+		    throw fail;
+		} else {
+		    start += "<cas:user>".length();
+		    int finish = response.indexOf("</cas:user>", start);
+		    if (finish < 0) {
+			log.error("Unexpected response from CAS: " + response);
+			throw fail;
+		    } else {
+			username = response.substring(start, finish).trim();
+		    }
+		}
+	    } else {
+		if (response.contains("<cas:authenticationFailure>")) {
+		    log.debug("CAS authentication result negative");
+		} else {
+		    log.error("Unexpected response from CAS: " + response);
+		}
+		
                 throw fail;
-            }
+	    }
 
-            String username = body.readLine();
             log.debug("CAS authenticated user:" + username);
 
             PMDbDao pmDb = new PMDbDao();
