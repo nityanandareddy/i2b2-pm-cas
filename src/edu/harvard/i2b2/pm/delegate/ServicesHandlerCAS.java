@@ -104,7 +104,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    } else {
 		if (response.contains("<cas:authenticationFailure>")) {
 		    log.debug("CAS authentication result negative");
-		    throw new Exception("EINTERNAL");
+		    throw new Exception("EAUTHENTICATION");
 		} else {
 		    log.error("Unexpected response from CAS: " + response);
 		    throw new Exception("EINTERNAL");
