@@ -83,17 +83,27 @@ public class ServicesHandlerCAS extends ServicesHandler {
 		builder.append(line);
 	    }
 	    String response = builder.toString();
-	    int start = response.indexOf("<cas:authenticationSuccess>");
+	    int start = response.indexOf("<cas:authenticationSuccess");
 	    String username;
 	    if (start > -1) {
-		start += "<cas:authenticationSuccess>".length();
-		start = response.indexOf("<cas:user>", start);
+	    	start = response.indexOf(">", start);
+	    	if (start < 0) {
+	    	    log.error("Unexpected response from CAS: " + response);
+	    	    throw new Exception("EINTERNAL");
+	    	}
+		start += 1;
+		start = response.indexOf("<cas:user", start);
 		if (start < 0) {
 		    log.error("Unexpected response from CAS: " + response);
 		    throw new Exception("EINTERNAL");
 		} else {
-		    start += "<cas:user>".length();
-		    int finish = response.indexOf("</cas:user>", start);
+		    start = response.indexOf(">", start);
+		    if (start < 0) {
+	    	        log.error("Unexpected response from CAS: " + response);
+	    	        throw new Exception("EINTERNAL");
+	    	    }
+		    start += 1;
+		    int finish = response.indexOf("</cas:user", start);
 		    if (finish < 0) {
 			log.error("Unexpected response from CAS: " + response);
 			throw new Exception("EINTERNAL");
