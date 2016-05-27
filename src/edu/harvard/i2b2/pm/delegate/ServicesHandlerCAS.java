@@ -102,7 +102,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
 		    }
 		}
 	    } else {
-		if (response.contains("<cas:authenticationFailure>")) {
+		if (response.contains("<cas:authenticationFailure")) {
 		    log.debug("CAS authentication result negative");
 		    throw new Exception("EAUTHENTICATION");
 		} else {
