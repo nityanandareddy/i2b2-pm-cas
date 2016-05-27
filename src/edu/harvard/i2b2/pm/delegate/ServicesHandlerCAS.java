@@ -57,9 +57,6 @@ public class ServicesHandlerCAS extends ServicesHandler {
         }
     }
 
-    protected static Exception fail = new Exception("Username or password does not exist");
-
-
     public ServicesHandlerCAS(ServicesMessage servicesMsg) throws I2B2Exception{
 	super(servicesMsg);
     }
@@ -93,13 +90,13 @@ public class ServicesHandlerCAS extends ServicesHandler {
 		start = response.indexOf("<cas:user>", start);
 		if (start < 0) {
 		    log.error("Unexpected response from CAS: " + response);
-		    throw fail;
+		    throw new Exception("EINTERNAL");
 		} else {
 		    start += "<cas:user>".length();
 		    int finish = response.indexOf("</cas:user>", start);
 		    if (finish < 0) {
 			log.error("Unexpected response from CAS: " + response);
-			throw fail;
+			throw new Exception("EINTERNAL");
 		    } else {
 			username = response.substring(start, finish).trim();
 		    }
@@ -107,8 +104,10 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    } else {
 		if (response.contains("<cas:authenticationFailure>")) {
 		    log.debug("CAS authentication result negative");
+		    throw new Exception("EINTERNAL");
 		} else {
 		    log.error("Unexpected response from CAS: " + response);
+		    throw new Exception("EINTERNAL");
 		}
 		
                 throw fail;
@@ -122,13 +121,13 @@ public class ServicesHandlerCAS extends ServicesHandler {
                 answers = pmDb.getUser(username, null);
             } catch (I2B2DAOException dberr) {
                 log.debug(dberr.toString());
-                throw fail;
+                throw new Exception("EINTERNAL");
             }
 
             Iterator users = answers.iterator();
             if (!users.hasNext()) {
                 log.debug("No such user record: " + username);
-                throw fail;
+                throw new Exception("EAUTHORIZATION");
             }
             body.close();
             body = null;
