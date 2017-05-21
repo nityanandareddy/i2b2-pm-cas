@@ -21,7 +21,7 @@ See the [i2b2 installation guide](https://www.i2b2.org/software/files/PDF/curren
 In order to login to i2b2 using CAS, you also need to install our patched i2b2 webclient, found at https://github.com/eurekaclinical/i2b2-webclient-cas.
 
 ## Installation
-Follow the usual [i2b2 installation instructions](https://www.i2b2.org/software/files/PDF/current/FR_Installation_Guide.pdf), except replace the stock project management module with this one before compiling i2b2.
+Follow the usual [i2b2 installation instructions](https://www.i2b2.org/software/files/PDF/current/FR_Installation_Guide.pdf), except replace the stock project management cell with this one before compiling i2b2.
 
 If you are installing i2b2 on a separate machine from Eureka!, create a file, `/etc/eureka/application.properties` with one line: 
 `cas.url=URL to your cas server`. This file already exists if you have already installed Eureka on the same machine.
