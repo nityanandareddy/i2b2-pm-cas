@@ -24,7 +24,9 @@ In order to login to i2b2 using CAS, you also need to install our patched i2b2 w
 Follow the usual [i2b2 installation instructions](https://www.i2b2.org/software/files/PDF/current/FR_Installation_Guide.pdf), except replace the stock project management cell with this one before compiling i2b2.
 
 Create a Java properties file, `/etc/eureka/application.properties` with one line: 
-`cas.url=theURL to your cas server`.
+```
+cas.url = the URL of your cas server
+```
 
 Finally, you may need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using. This is especially true if the CAS server's certificate is self-signed.
 
