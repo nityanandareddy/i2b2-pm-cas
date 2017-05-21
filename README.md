@@ -4,11 +4,9 @@ This is a stock i2b2 1.7.05 project management module patched with support for d
 The code is adapted from similar code for an older version of i2b2 by Dan Connolly found at https://bitbucket.org/DanC/i2b2-pm-cas.
 
 ## Versions of CAS Supported
-
 Eureka! currently uses a patched copy of CAS version 3.5.2. While these i2b2 patches have only been tested with Eureka!'s patched CAS, they likely also will work with stock CAS 3.5.2.
 
 ## Installation
-
 Replace the stock project management module with this one before compiling i2b2, and it will be built and install as usual.
 
 If you are installing i2b2 on a separate machine from Eureka!, create a file, `/etc/eureka/application.properties` with one line: 
@@ -19,9 +17,7 @@ Finally, you may need to install the SSL certificate served by CAS server into t
 In order to login to i2b2 using CAS, you also need to install our patched i2b2 webclient, found at https://github.com/eurekaclinical/i2b2-webclient-cas.
 
 ## Configuration
-
-With this module installed, the i2b2 project management module's user data table becomes an authorization table. The code authenticates the user with Eureka! CAS, and then it checks the user data table for the existence of the user's account before authorizing the user. Any passwords in the user data table are ignored.
+When using these patches, the i2b2 project management module's user data table becomes an authorization table. The code authenticates the user with Eureka! CAS, and then it checks the user data table for the existence of the user's account before authorizing the user. Any passwords in the user data table are ignored. When authorizing users, we strongly recommend that you populate the password field with a random password.
 
 ## Licensing
-
 This code is released under the i2b2 Software License version 2.1, available at https://www.i2b2.org/software/i2b2_license.html.
