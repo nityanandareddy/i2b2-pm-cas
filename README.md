@@ -28,7 +28,7 @@ Create a Java properties file, `/etc/eureka/application.properties` with one lin
 cas.url = the URL of your cas server
 ```
 
-Finally, you may need to install the SSL certificate served by CAS server into the cacerts file of the Java installation that i2b2 is using. This is especially true if the CAS server's certificate is self-signed.
+Finally, you may need to install the SSL certificate served by CAS server into the certificate store of the Java installation that i2b2 is using. This is especially true if the CAS server's certificate is self-signed. See https://www.sslshopper.com/article-most-common-java-keytool-keystore-commands.html for instructions on how to work with the Java certificate store.
 
 ## Configuration
 When using these patches, the i2b2 project management module's user data table becomes an authorization table. The code authenticates the user with Eureka! CAS, and then it checks the user data table for the existence of the user's account before authorizing the user. Any passwords in the user data table are ignored. When authorizing users, we strongly recommend that you populate the password field with a random password.
