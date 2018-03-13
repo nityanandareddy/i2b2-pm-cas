@@ -312,8 +312,7 @@ public class ServicesHandler extends RequestHandler {
 			}	
 
 			String password = rmt.getPassword().getValue();
-
-
+			log.debug("++REQUEST INFO++"+getServicesMsg.getRequestType());
 			//If password begins with "SessionKey:" its a session key and decrypt it and validate it
 			if (password.startsWith("SessionKey:"))
 			{

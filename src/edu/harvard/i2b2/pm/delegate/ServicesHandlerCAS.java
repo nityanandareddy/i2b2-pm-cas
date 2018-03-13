@@ -70,7 +70,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    return super.validateSuppliedPassword(service, ticket, param);
 	}
 
-	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "serviceValidate?"
+	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode(service, "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
 	log.debug("CAS validation address: " + addr);
