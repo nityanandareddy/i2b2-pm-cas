@@ -74,7 +74,9 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	    + "service=" + URLEncoder.encode(service, "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
 	log.debug("CAS validation address: " + addr);
-
+	System.out.println("FORWARD ADDRESS++++++++:"+addr);
+	log.debug("FORWARD ADDRESS++++++++:"+addr);
+	log.info("FORWARD ADDRESS++++++++:"+addr);
 	BufferedReader body = URLOpener.open(addr);
         try {
 	    StringBuilder builder = new StringBuilder();
