@@ -146,8 +146,9 @@ public class PMService {
         */
 		
 		OMElement returnElement = null;
-
-
+		
+		System.out.println("+++getPMDataElement++++:"+getPMDataElement);
+		log.debug("+++getPMDataElement++++:"+getPMDataElement);
 		if (getPMDataElement == null) {
 			log.error("Incoming PM request is null");
 			throw new I2B2Exception("Incoming PM request is null");
@@ -156,40 +157,43 @@ public class PMService {
 		Pattern p = Pattern.compile("<password>.+</password>");
 		Matcher m = p.matcher(getPMDataElement.toString());
 		String outString = m.replaceAll("<password>*********</password>");
-	
+		System.out.println("+++outString++++:"+outString);
+		log.debug("+++outString++++:"+outString);
 		p = Pattern.compile(">.+</ns9:set_password>");
 		m = p.matcher(outString);
 		outString = m.replaceAll(">*********</ns9:set_password>");
+		System.out.println("+++outString++++:"+outString);
 		log.debug("Received Request PM Element " + outString);
 
 		
 		log.debug("Begin getting servicesMsg");
 		ServicesMessage servicesMsg = new ServicesMessage(getPMDataElement.toString());
 		long waitTime = 0;
-
+		System.out.println("++servicesMsg.getRequestMessageType()++"+servicesMsg.getRequestMessageType());
 		if (servicesMsg.getRequestMessageType() != null) {
+			System.out.println("++servicesMsg.getRequestMessageType().getRequestHeader()++"+servicesMsg.getRequestMessageType().getRequestHeader());
 			if (servicesMsg.getRequestMessageType().getRequestHeader() != null) {
 				waitTime = servicesMsg.getRequestMessageType()
 				.getRequestHeader()
 				.getResultWaittimeMs();
 			}
 		}
-
+		System.out.println("Completed getting servicesMsg, waittime is: " + waitTime);
 		log.debug("Completed getting servicesMsg, waittime is: " + waitTime);
 
 		//do PM processing inside thread, so that  
 		// service could sends back message with timeout error.
-
+		System.out.println("starting of the thread");
 		String pmDataResponse = null;
 		try {
 		ExecutorRunnable er = new ExecutorRunnable();
 		//er.setInputString(requestElementString);
 		log.debug("begin setRequestHandler, my servicesMsg: " + servicesMsg);
-
+		System.out.println("begin setRequestHandler, my servicesMsg: " + servicesMsg);
 		//er.setRequestHandler(new ServicesHandler(servicesMsg));
                 er.setRequestHandler(new ServicesHandlerCAS(servicesMsg));
 		log.debug("middle setRequestHandler");
-		
+		System.out.println("middle setRequestHandler");
 		
 		log.debug("end setRequestHandler");
 
@@ -207,7 +211,7 @@ public class PMService {
 				//} else {
 				//	t.wait();
 				//}
-				
+				System.out.println("thread started");
 				 long startTime = System.currentTimeMillis(); 
                  long deltaTime = -1; 
                  while((er.isJobCompleteFlag() == false)&& (deltaTime < waitTime)){ 
@@ -254,6 +258,7 @@ public class PMService {
             e.printStackTrace();
         }
         try {
+        	System.out.println("my pm repsonse is: " + pmDataResponse);
             returnElement = MessageFactory.createResponseOMElementFromString(pmDataResponse);
             log.debug("my pm repsonse is: " + pmDataResponse);
             log.debug("my return is: " + returnElement);

@@ -42,6 +42,7 @@ public class ServicesMessage {
         		//new JAXBUtil(JAXBConstant.DEFAULT_PACKAGE_NAME);
 
         try {
+        	System.out.println("Begin unmarshall of XML");
             log.debug("Begin unmarshall of XML");
             JAXBElement jaxbElement = jaxbUtil.unMashallFromString(requestPdo);
 
@@ -52,7 +53,7 @@ public class ServicesMessage {
 
             log.debug("Finished unmarshall of XML");
             this.reqMessageType = (RequestMessageType) jaxbElement.getValue();
-            
+            System.out.println("++reqMessageType++"+reqMessageType);
         } catch (JAXBUtilException e) {
             e.printStackTrace();
             log.error(e.getMessage(), e);
