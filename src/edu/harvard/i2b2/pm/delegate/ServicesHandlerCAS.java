@@ -40,28 +40,8 @@ import com.ibm.wsdl.extensions.http.HTTPConstants;
  * @todo: Change hard-coded CAS server address to a deploy-time option.
  */
 public class ServicesHandlerCAS extends ServicesHandler {
-    private static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
-    private static final String CAS_URL_PROPERTY_NAME = "cas.url";
-    private static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
-    private static final Properties appProperties = new Properties();
-    static {
-        try {
-            FileReader fr = new FileReader(CONFIG_PATHNAME);
-            appProperties.load(fr);
-            String readCasUrl = appProperties.getProperty(CAS_URL_PROPERTY_NAME);
-            if (readCasUrl == null) {
-                appProperties.setProperty(CAS_URL_PROPERTY_NAME, CAS_DEFAULT_URL);
-            } else if (!readCasUrl.endsWith("/")) {
-                appProperties.setProperty(CAS_URL_PROPERTY_NAME, readCasUrl + "/");
-            }
-            fr.close();
-            fr = null;
-        } catch (FileNotFoundException ex) {
-            appProperties.setProperty(CAS_URL_PROPERTY_NAME, CAS_DEFAULT_URL);
-        } catch (IOException ex) {
-            throw new IllegalStateException("Error reading CAS integration configuration file " + CONFIG_PATHNAME, ex);
-        }
-    }
+    
+ 
 
     public ServicesHandlerCAS(ServicesMessage servicesMsg) throws I2B2Exception{
 	super(servicesMsg);
@@ -70,20 +50,33 @@ public class ServicesHandlerCAS extends ServicesHandler {
     protected UserType validateSuppliedPassword (String service, 
             String ticket, Hashtable param) throws Exception {
 
+    	System.out.println("In ServicesHandlerCAS");
+    	System.out.println("In ServicesHandlerCAS service:"+service);
+    	System.out.println("In ServicesHandlerCAS ticket:"+ticket);
 	// support password-based accounts too for OBFSC_SERVICE_ACCOUNT
-	if (! (service.startsWith("http:")
+    if(service == null || service.isEmpty())
+    {
+    	
+    }
+    else if (! (service.startsWith("http:")
 	       || service.startsWith("https:"))){
 	    return super.validateSuppliedPassword(service, ticket, param);
 	}
 	
 	MessageContext context = MessageContext.getCurrentMessageContext();
 	HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+	String ticketVal = null ;
+	if(request != null)
+	{
+		ticketVal = request.getParameter("ticket");
+		System.out.println("ticketVal++"+ticketVal);
+	}
 	System.out.println("+++request+++"+request);
 	log.debug("+++request+++"+request);
 	log.info("+++request+++"+request);
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode(service, "UTF-8")
-	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
+	    + "&ticket="+ticketVal;
 	log.debug("CAS validation address: " + addr);
 	System.out.println("FORWARD ADDRESS++++++++:"+addr);
 	log.debug("FORWARD ADDRESS++++++++:"+addr);

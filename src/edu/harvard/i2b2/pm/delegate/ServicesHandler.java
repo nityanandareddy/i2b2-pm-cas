@@ -9,14 +9,24 @@
  */
 package edu.harvard.i2b2.pm.delegate;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
+
+import org.apache.axis2.context.MessageContext;
 
 import edu.harvard.i2b2.common.exception.I2B2DAOException;
 import edu.harvard.i2b2.common.exception.I2B2Exception;
@@ -62,6 +72,28 @@ public class ServicesHandler extends RequestHandler {
 	private ProjectType projectInfo = null;
 	private ServicesMessage getServicesMsg = null;
 
+	protected static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
+	protected static final String CAS_URL_PROPERTY_NAME = "cas.url";
+	protected static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
+	protected static final Properties appProperties = new Properties();
+	   static {
+	        try {
+	            FileReader fr = new FileReader(CONFIG_PATHNAME);
+	            appProperties.load(fr);
+	            String readCasUrl = appProperties.getProperty(CAS_URL_PROPERTY_NAME);
+	            if (readCasUrl == null) {
+	                appProperties.setProperty(CAS_URL_PROPERTY_NAME, CAS_DEFAULT_URL);
+	            } else if (!readCasUrl.endsWith("/")) {
+	                appProperties.setProperty(CAS_URL_PROPERTY_NAME, readCasUrl + "/");
+	            }
+	            fr.close();
+	            fr = null;
+	        } catch (FileNotFoundException ex) {
+	            appProperties.setProperty(CAS_URL_PROPERTY_NAME, CAS_DEFAULT_URL);
+	        } catch (IOException ex) {
+	            throw new IllegalStateException("Error reading CAS integration configuration file " + CONFIG_PATHNAME, ex);
+	        }
+	    }
 	public ServicesHandler(ServicesMessage servicesMsg) throws I2B2Exception{
 		log.debug("Setting the servicesMsg");	
 
@@ -228,7 +260,7 @@ public class ServicesHandler extends RequestHandler {
 		PMDbDao pmDb = new PMDbDao();
 
 		log.debug("I am in the RequestHandler");
-
+		System.out.println("I am in the RequestHandler");
 		ConfigureType cType = new ConfigureType();
 		UserType uType = new UserType();
 		CellDatasType aType = new CellDatasType();
@@ -237,6 +269,8 @@ public class ServicesHandler extends RequestHandler {
 
 		try {
 			String domainId = null;
+			
+			
 			SecurityType rmt = getServicesMsg.getRequestMessageType().getMessageHeader().getSecurity();
 			String project = getServicesMsg.getRequestMessageType().getMessageHeader().getProjectId();
 			log.debug("My username: " + rmt.getUsername());
@@ -2074,6 +2108,95 @@ public class ServicesHandler extends RequestHandler {
 	}
 
 
+	private void getUsername()
+	{
+		MessageContext context = MessageContext.getCurrentMessageContext();
+		HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+		String ticketVal = null ;
+		try{
+		if(request != null)
+		{
+			ticketVal = request.getParameter("ticket");
+			System.out.println("ticketVal++"+ticketVal);
+		}
+		System.out.println("+++request+++"+request);
+		log.debug("+++request+++"+request);
+		log.info("+++request+++"+request);
+		String addr = "";
+		
+		 addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
+		    + "service=" + URLEncoder.encode(request.getRequestURI().toString(), "UTF-8")
+		    + "&ticket="+ticketVal;
+		
+		log.debug("CAS validation address: " + addr);
+		System.out.println("FORWARD ADDRESS++++++++:"+addr);
+		log.debug("FORWARD ADDRESS++++++++:"+addr);
+		log.info("FORWARD ADDRESS++++++++:"+addr);
+		BufferedReader body = URLOpener.open(addr);
+	        try {
+		    StringBuilder builder = new StringBuilder();
+		    String line;
+		    while ((line = body.readLine()) != null) {
+			builder.append(line);
+		    }
+		    String response = builder.toString();
+		    System.out.println("+++++response+++:"+response);
+		    int start = response.indexOf("<cas:authenticationSuccess");
+		    String username;
+		    if (start > -1) {
+		    	start = response.indexOf(">", start);
+		    	if (start < 0) {
+		    	    log.error("Unexpected response from CAS: " + response);
+		    	    throw new Exception("EINTERNAL");
+		    	}
+			start += 1;
+			start = response.indexOf("<cas:user", start);
+			if (start < 0) {
+			    log.error("Unexpected response from CAS: " + response);
+			    throw new Exception("EINTERNAL");
+			} else {
+			    start = response.indexOf(">", start);
+			    if (start < 0) {
+		    	        log.error("Unexpected response from CAS: " + response);
+		    	        throw new Exception("EINTERNAL");
+		    	    }
+			    start += 1;
+			    int finish = response.indexOf("</cas:user", start);
+			    if (finish < 0) {
+				log.error("Unexpected response from CAS: " + response);
+				throw new Exception("EINTERNAL");
+			    } else {
+				username = response.substring(start, finish).trim();
+			    }
+			}
+		    } else {
+			if (response.contains("<cas:authenticationFailure")) {
+			    log.debug("CAS authentication result negative");
+			    throw new Exception("EAUTHENTICATION");
+			} else {
+			    log.error("Unexpected response from CAS: " + response);
+			    throw new Exception("EINTERNAL");
+			}
+		    }
+
+	            log.debug("CAS authenticated user:" + username);
+
+	        }finally {
+	            if (body != null) {
+	                try {
+	                    body.close();
+	                } catch (IOException e) 
+	                {
+	                	e.printStackTrace();
+	                }
+	            }
+	        }
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
 
 
 }
