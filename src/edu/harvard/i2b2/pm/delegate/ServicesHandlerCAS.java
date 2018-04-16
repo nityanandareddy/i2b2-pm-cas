@@ -60,9 +60,10 @@ public class ServicesHandlerCAS extends ServicesHandler {
     }
     else if (! (service.startsWith("http:")
 	       || service.startsWith("https:"))){
+    	System.out.println("Inside http check");
 	    return super.validateSuppliedPassword(service, ticket, param);
 	}
-	
+    System.out.println("outside http check");
 	MessageContext context = MessageContext.getCurrentMessageContext();
 	HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
 	String ticketVal = null ;
