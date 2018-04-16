@@ -350,7 +350,7 @@ public class ServicesHandler extends RequestHandler {
 			if (password.startsWith("SessionKey:"))
 			{
 				String sessionKey=password.replace("SessionKey:", "");
-				log.debug("Encrypted Session key: "+sessionKey+" passed in for validation.");
+				log.debug("Encrypted  Session key: "+sessionKey+" passed in for validation.");
 				if (rmt.getPassword().getTokenMsTimeout() == null)
 					rmt.getPassword().setTokenMsTimeout(1800000);
 				if (verifySession(pmDb, rmt.getPassword().getTokenMsTimeout(), sessionKey, rmt.getUsername()) == false)
