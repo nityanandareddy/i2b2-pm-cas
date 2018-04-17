@@ -26,6 +26,7 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
 
+import org.apache.axis2.client.Stub;
 import org.apache.axis2.context.MessageContext;
 
 import edu.harvard.i2b2.common.exception.I2B2DAOException;
@@ -71,6 +72,7 @@ import edu.harvard.i2b2.pm.ejb.DBInfoType;
 public class ServicesHandler extends RequestHandler {
 	private ProjectType projectInfo = null;
 	private ServicesMessage getServicesMsg = null;
+	private MessageContext context = null;
 
 	protected static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
 	protected static final String CAS_URL_PROPERTY_NAME = "cas.url";
@@ -98,6 +100,8 @@ public class ServicesHandler extends RequestHandler {
 		log.debug("Setting the servicesMsg");	
 
 		getServicesMsg = servicesMsg;
+		context = MessageContext.getCurrentMessageContext();
+		System.out.println("+MessageContext+"+context);
 		//setDbInfo(servicesMsg.getRequestMessageType().getMessageHeader());
 	}
 
@@ -2115,12 +2119,14 @@ public class ServicesHandler extends RequestHandler {
 
 	private void getUsername()
 	{
+		try{
 		System.out.println("Inside user name");
-		MessageContext context = MessageContext.getCurrentMessageContext();
+		//stub._getServiceContext().getCurrentOperationContext().getMessageContext("In");
+		context = MessageContext.getCurrentMessageContext();
 		System.out.println("context:"+context);
 		HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
 		String ticketVal = null ;
-		try{
+		
 		if(request != null)
 		{
 			ticketVal = request.getParameter("ticket");
