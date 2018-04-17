@@ -2122,7 +2122,7 @@ public class ServicesHandler extends RequestHandler {
 		try{
 		System.out.println("Inside user name");
 		//stub._getServiceContext().getCurrentOperationContext().getMessageContext("In");
-		context = MessageContext.getCurrentMessageContext();
+		//context = MessageContext.getCurrentMessageContext();
 		System.out.println("context:"+context);
 		HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
 		String ticketVal = null ;
