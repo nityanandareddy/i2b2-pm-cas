@@ -2138,7 +2138,7 @@ public class ServicesHandler extends RequestHandler {
 		String addr = "";
 		
 		 addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
-		    + "service=" + URLEncoder.encode(request.getRequestURL().toString(), "UTF-8")
+		    + "service=" + URLEncoder.encode("http://localhost:9090"+request.getRequestURI().toString(), "UTF-8")
 		    + "&ticket="+ticketVal;
 		
 		log.debug("CAS validation address: " + addr);
