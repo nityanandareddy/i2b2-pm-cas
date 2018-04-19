@@ -77,11 +77,13 @@ public class ServicesHandlerCAS extends ServicesHandler {
 			System.out.println("ticketVal++"+ticket);
 		}
 	// support password-based accounts too for OBFSC_SERVICE_ACCOUNT
-	/*if (! (service.startsWith("http:")
-	       || service.startsWith("https:"))){
-	    return super.validateSuppliedPassword(service, ticket, param);
-	}*/
-
+    if(!service.isEmpty()){
+    	System.out.println("entered into http check");
+		if (! (service.startsWith("http:")
+		       || service.startsWith("https:"))){
+		    return super.validateSuppliedPassword(service, ticket, param);
+		}
+    }
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode("http://localhost:9090"+request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
