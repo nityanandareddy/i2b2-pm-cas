@@ -2,13 +2,20 @@
 [Atlanta Clinical and Translational Science Institute (ACTSI)](http://www.actsi.org), [Emory University](http://www.emory.edu), Atlanta, GA
 
 ## What does it do?
-This is a stock i2b2 1.7.08b project management (PM) cell, patched with support for delegating authentication to a server that implements [version 2 of the CAS protocol](https://apereo.github.io/cas/5.0.x/protocol/CAS-Protocol-V2-Specification.html) for single sign-on.
+This is a stock i2b2 1.7.09c project management (PM) cell, patched with support for delegating authentication to a server that implements [version 2 of the CAS protocol](https://apereo.github.io/cas/5.0.x/protocol/CAS-Protocol-V2-Specification.html) for single sign-on.
 
 The code is adapted from similar code for an older version of i2b2 by Dan Connolly found at https://bitbucket.org/DanC/i2b2-pm-cas.
 
 ## Version history
+
+### Version 1.2
+Updated i2b2 version to 1.7.09c.
+
+### Version 1.1
+Updated i2b2 version to 1.7.08b.
+
 ### Version 1.0
-Initial release.
+Initial release using i2b2 version 1.7.05.
 
 ## CAS implementations supported
 We expect any full implementation of version 2 of the CAS protocol to work. In particular, the implementation must support proxying. The following implementations of CAS are known to work:
