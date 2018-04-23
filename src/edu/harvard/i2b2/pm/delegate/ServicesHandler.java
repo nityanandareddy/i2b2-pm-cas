@@ -264,7 +264,7 @@ public class ServicesHandler extends RequestHandler {
 		PMDbDao pmDb = new PMDbDao();
 
 		log.debug("I am in the RequestHandler");
-		System.out.println("I am in the RequestHandler");
+
 		ConfigureType cType = new ConfigureType();
 		UserType uType = new UserType();
 		CellDatasType aType = new CellDatasType();
@@ -273,11 +273,10 @@ public class ServicesHandler extends RequestHandler {
 
 		try {
 			String domainId = null;
-			
-			SecurityType rmt	 = getServicesMsg.getRequestMessageType().getMessageHeader().getSecurity();
+			SecurityType rmt = getServicesMsg.getRequestMessageType().getMessageHeader().getSecurity();
 			String project = getServicesMsg.getRequestMessageType().getMessageHeader().getProjectId();
 			log.debug("My username: " + rmt.getUsername());
-			System.out.println("My username: " + rmt.getUsername());
+
 
 			String SQL_QUERY = null;
 
@@ -296,9 +295,8 @@ public class ServicesHandler extends RequestHandler {
 				throw new Exception ("Database error in getting environment data");
 			}
 			log.debug("Start parsing environment results of: " + response);
-			System.out.println("Start parsing environment results of: " + response);
+
 			Iterator it = response.iterator();
-			System.out.println("it"+it);
 			while (it.hasNext())
 			{
 				cType =(ConfigureType)it.next();
@@ -318,7 +316,6 @@ public class ServicesHandler extends RequestHandler {
 
 			//Determine authentication method
 			log.debug("Get authentication method by using domain: " + domainId);
-			System.out.println("Get authentication method by using domain: " + domainId);
 			//String method = "", domainController= "", domain= "";
 			String method = null;
 			for( it=pmDb.getEnvironmentData(domainId).iterator();it.hasNext();){
@@ -351,13 +348,11 @@ public class ServicesHandler extends RequestHandler {
 			}	
 
 			String password = rmt.getPassword().getValue();
-			log.debug("++REQUEST INFO++"+getServicesMsg.getRequestType());
-			System.out.println("++REQUEST INFO++"+getServicesMsg.getRequestType());
+
+
 			//If password begins with "SessionKey:" its a session key and decrypt it and validate it
 			if (password.startsWith("SessionKey:"))
 			{
-				System.out.println("insode session key");
-				//getUsername();
 				String sessionKey=password.replace("SessionKey:", "");
 				log.debug("Encrypted Session key: "+sessionKey+" passed in for validation.");
 				if (rmt.getPassword().getTokenMsTimeout() == null)
@@ -400,8 +395,7 @@ public class ServicesHandler extends RequestHandler {
 				//get the user from the service
 				try {
 					log.debug("Validating user: " + rmt.getUsername());
-					System.out.println("Validating user: " + rmt.getUsername());
-					//getUsername();
+
 					UserType user = validateSuppliedPassword( rmt.getUsername(), rmt.getPassword().getValue(), params);
 					uType.setFullName(user.getFullName());
 					uType.setIsAdmin(user.isIsAdmin());
