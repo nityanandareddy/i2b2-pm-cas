@@ -6,3 +6,4 @@ reports
 nbproject
 TESTS-TestSuites.xml
 dist
+/bin/

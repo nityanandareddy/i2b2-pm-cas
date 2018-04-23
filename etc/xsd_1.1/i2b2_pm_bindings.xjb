@@ -5,7 +5,7 @@
                schemaLocation="i2b2_PDO.xsd"
                node="/xs:schema"
                -->
-  <jxb:bindings schemaLocation="../../../edu.harvard.i2b2.xml/xsd/cell/pm_1.1/PM_USER.xsd" node="/xs:schema">
+  <jxb:bindings schemaLocation="C:/Users/nchappi/git/i2b2-core-server/edu.harvard.i2b2.xml/xsd/cell/pm_1.1/PM_USER.xsd" node="/xs:schema">
         <jxb:schemaBindings > 
 	           <jxb:package name="edu.harvard.i2b2.pm.datavo.pm">
 	  	         <jxb:javadoc><![CDATA[<body>Package level 

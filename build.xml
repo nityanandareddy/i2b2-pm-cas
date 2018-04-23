@@ -16,7 +16,7 @@
 	<!-- =================================================================== -->
 	<!-- 								INIT 								 -->
 	<!-- =================================================================== -->
-	<target name="init" depends="common_init,common-classpath" description="Prepare for build">
+	<target name="init" depends="common-classpath" description="Prepare for build">
 		<path id="classpath">
 			<path refid="common-classpath" />
 			<pathelement location="${classes}" />
@@ -78,6 +78,7 @@
 	
 	<!-- Axis2 archive file -->
 	<target name="axis2aar" depends="compile" description="Create Axis2 archive file">
+		<echo message="${dist}/${Name}.aar" />
 		<jar compress="true" jarfile="${dist}/${Name}.aar">
 			<fileset dir="${classes}">
 				<include name="**/**" /> 
