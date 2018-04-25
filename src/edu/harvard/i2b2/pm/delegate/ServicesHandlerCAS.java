@@ -42,7 +42,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
     private static final String CAS_URL_PROPERTY_NAME = "cas.url";
     private static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
     private static final Properties appProperties = new Properties();
-    private MessageContext context = null;
+    
     static {
         try {
             FileReader fr = new FileReader(CONFIG_PATHNAME);
@@ -62,33 +62,31 @@ public class ServicesHandlerCAS extends ServicesHandler {
         }
     }
 
+    private MessageContext context = null;
+
     public ServicesHandlerCAS(ServicesMessage servicesMsg) throws I2B2Exception{
-    super(servicesMsg);
-    context = MessageContext.getCurrentMessageContext();
+	super(servicesMsg);
+	context = MessageContext.getCurrentMessageContext();
     }
 
     protected UserType validateSuppliedPassword (String service, 
             String ticket, Hashtable param) throws Exception {
-
-    	HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
-    	if(request != null)
-		{
-    		ticket = request.getParameter("ticket");
-			System.out.println("ticketVal++"+ticket);
-		}
-	// support password-based accounts too for OBFSC_SERVICE_ACCOUNT
-    if(!service.isEmpty()){
-    	System.out.println("entered into http check");
-		if (! (service.startsWith("http:")
-		       || service.startsWith("https:"))){
-		    return super.validateSuppliedPassword(service, ticket, param);
-		}
-    }
+    	
+	// Support password-based accounts too for OBFSC_SERVICE_ACCOUNT and other clients.
+        if (service != null && !service.isEmpty()) {
+	    return super.validateSuppliedPassword(service, ticket, param);
+        }
+    
+        HttpServletRequest request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+	if (request != null) {
+	    ticket = request.getParameter("ticket");
+	}
+	
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode("http://localhost:9090"+request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
 	log.debug("CAS validation address: " + addr);
-	System.out.println("CAS validation address: " + addr);
+	
 	BufferedReader body = URLOpener.open(addr);
         try {
 	    StringBuilder builder = new StringBuilder();
@@ -162,102 +160,6 @@ public class ServicesHandlerCAS extends ServicesHandler {
             }
         }
     }
-    private String getUsername()
-	{
-		String username = null;
-		try{
-		System.out.println("Inside user name");
-		//stub._getServiceContext().getCurrentOperationContext().getMessageContext("In");
-		//context = MessageContext.getCurrentMessageContext();
-		System.out.println("context:"+context);
-		HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
-		String ticketVal = null ;
-		
-		if(request != null)
-		{
-			ticketVal = request.getParameter("ticket");
-			System.out.println("ticketVal++"+ticketVal);
-		}
-		System.out.println("+++request+++"+request);
-		log.debug("+++request+++"+request);
-		log.info("+++request+++"+request);
-		String addr = "";
-		
-		 addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
-		    + "service=" + URLEncoder.encode("http://localhost:9090"+request.getRequestURI().toString(), "UTF-8")
-		    + "&ticket="+ticketVal;
-		
-		log.debug("CAS validation address: " + addr);
-		System.out.println("FORWARD ADDRESS++++++++:"+addr);
-		log.debug("FORWARD ADDRESS++++++++:"+addr);
-		log.info("FORWARD ADDRESS++++++++:"+addr);
-		BufferedReader body = URLOpener.open(addr);
-	        try {
-		    StringBuilder builder = new StringBuilder();
-		    String line;
-		    while ((line = body.readLine()) != null) {
-			builder.append(line);
-		    }
-		    String response = builder.toString();
-		    System.out.println("+++++response+++:"+response);
-		    int start = response.indexOf("<cas:authenticationSuccess");
-		    
-		    if (start > -1) {
-		    	start = response.indexOf(">", start);
-		    	if (start < 0) {
-		    	    log.error("Unexpected response from CAS: " + response);
-		    	    throw new Exception("EINTERNAL");
-		    	}
-			start += 1;
-			start = response.indexOf("<cas:user", start);
-			if (start < 0) {
-			    log.error("Unexpected response from CAS: " + response);
-			    throw new Exception("EINTERNAL");
-			} else {
-			    start = response.indexOf(">", start);
-			    if (start < 0) {
-		    	        log.error("Unexpected response from CAS: " + response);
-		    	        throw new Exception("EINTERNAL");
-		    	    }
-			    start += 1;
-			    int finish = response.indexOf("</cas:user", start);
-			    if (finish < 0) {
-				log.error("Unexpected response from CAS: " + response);
-				throw new Exception("EINTERNAL");
-			    } else {
-				username = response.substring(start, finish).trim();
-			    }
-			}
-		    } else {
-			if (response.contains("<cas:authenticationFailure")) {
-			    log.debug("CAS authentication result negative");
-			    throw new Exception("EAUTHENTICATION");
-			} else {
-			    log.error("Unexpected response from CAS: " + response);
-			    throw new Exception("EINTERNAL");
-			}
-		    }
-
-	            log.debug("CAS authenticated user:" + username);
-
-	        }finally {
-	            if (body != null) {
-	                try {
-	                    body.close();
-	                } catch (IOException e) 
-	                {
-	                	e.printStackTrace();
-	                }
-	            }
-	        }
-		}catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return username;
-	}
-	
-
 }
 
 /**
