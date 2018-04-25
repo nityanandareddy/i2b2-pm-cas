@@ -69,21 +69,25 @@ public class ServicesHandlerCAS extends ServicesHandler {
 
     protected UserType validateSuppliedPassword (String service, 
             String ticket, Hashtable param) throws Exception {
-
-    	HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
-    	if(request != null)
-		{
-    		ticket = request.getParameter("ticket");
-			System.out.println("ticketVal++"+ticket);
-		}
+    	
+    	System.out.println("service val first++"+service);
+    	System.out.println("ticketVal first++"+ticket);
 	// support password-based accounts too for OBFSC_SERVICE_ACCOUNT
-    if(!service.isEmpty()){
+    if(!( service ==null || service.isEmpty()) ){
     	System.out.println("entered into http check");
 		if (! (service.startsWith("http:")
 		       || service.startsWith("https:"))){
 		    return super.validateSuppliedPassword(service, ticket, param);
 		}
     }
+    
+    HttpServletRequest  request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+	if(request != null)
+	{
+		ticket = request.getParameter("ticket");
+		System.out.println("ticketVal++"+ticket);
+	}
+	
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode("http://localhost:9090"+request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
