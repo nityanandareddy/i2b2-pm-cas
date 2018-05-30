@@ -176,11 +176,12 @@ public class ServicesHandler extends RequestHandler {
 		{
 			//Check to see if user has authentication set
 
-
+			System.out.println("in else condition++++");
 			List response = null;
 
 			try {
 				response = pmDb.getUser(username, null, null, true); //PMUtil.getInstance().getHashedPassword(password));
+				System.out.println("+response++:"+response);
 			} catch (I2B2DAOException e1) {
 				throw new Exception ( "Database error in getting user data");
 			} catch (I2B2Exception e1) {
@@ -190,21 +191,24 @@ public class ServicesHandler extends RequestHandler {
 			Iterator it = response.iterator();
 			UserType user = null;
 			while (it.hasNext())
-
 			{
 				user = (UserType)it.next();
-
+				System.out.println("user+++"+user);
 				//Check the password
 				if (user.getPassword().getValue().startsWith("@"))
 				{
+					System.out.println("++inside @ statement++");
+					System.out.println("++password++"+password);
 					if	(!(user.getPassword().getValue().substring(1)).equals(password))
 					{
 						saveLoginAttempt(pmDb, username, "BADPASSWORD");
 						throw new Exception ("Current password is incorrect");
 					}
 				}				
-				else if (!user.getPassword().getValue().equals(PMUtil.getInstance().getHashedPassword(password)))
+				else if (!(user.getPassword().getValue().equals(PMUtil.getInstance().getHashedPassword(password))))
 				{
+					System.out.println("++inside hash statement++");
+					System.out.println("++PMUtil.getInstance().getHashedPassword(password)))++"+(PMUtil.getInstance().getHashedPassword(password)));
 					saveLoginAttempt(pmDb, username, "BADPASSWORD");
 					throw new Exception ("Current password is incorrect");
 
