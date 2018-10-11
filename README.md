@@ -1,5 +1,5 @@
 # i2b2-pm-cas
-[Atlanta Clinical and Translational Science Institute (ACTSI)](http://www.actsi.org), [Emory University](http://www.emory.edu), Atlanta, GA
+[Georgia Clinical and Translational Science Alliance (Georgia CTSA)](http://www.georgiactsa.org), [Emory University](http://www.emory.edu), Atlanta, GA
 
 ## What does it do?
 This is a stock i2b2 1.7.09c project management (PM) cell, patched with support for delegating authentication to a server that implements [version 2 of the CAS protocol](https://apereo.github.io/cas/5.0.x/protocol/CAS-Protocol-V2-Specification.html) for single sign-on.
