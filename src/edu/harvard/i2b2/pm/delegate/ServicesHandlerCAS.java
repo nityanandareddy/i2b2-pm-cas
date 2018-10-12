@@ -41,7 +41,7 @@ import org.apache.axis2.context.MessageContext;
 public class ServicesHandlerCAS extends ServicesHandler {
     private static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
     private static final String CAS_URL_PROPERTY_NAME = "cas.url";
-    private static final String I2B2_INTEGRATION_SERVICE_URL_NAME = "eurekaclinical.domain.url";
+    private static final String I2B2_SERVICES_URL_NAME = "i2b2.services.url";
     private static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
     private static final Properties appProperties = new Properties();
     
@@ -50,16 +50,16 @@ public class ServicesHandlerCAS extends ServicesHandler {
             FileReader fr = new FileReader(CONFIG_PATHNAME);
             appProperties.load(fr);
             String readCasUrl = appProperties.getProperty(CAS_URL_PROPERTY_NAME);
-            String i2b2IntegrationServiceUrl = appProperties.getProperty(I2B2_INTEGRATION_SERVICE_URL_NAME);
+            String i2b2ServicesUrl = appProperties.getProperty(I2B2_SERVICES_URL_NAME);
             if (readCasUrl == null) {
                 appProperties.setProperty(CAS_URL_PROPERTY_NAME, CAS_DEFAULT_URL);
             } else if (!readCasUrl.endsWith("/")) {
                 appProperties.setProperty(CAS_URL_PROPERTY_NAME, readCasUrl + "/");
             }
-            if(i2b2IntegrationServiceUrl == null || i2b2IntegrationServiceUrl.isEmpty())
+            if(i2b2ServicesUrl == null || i2b2ServicesUrl.isEmpty())
             {
-            	 log.error("Missing the value for property "+I2B2_INTEGRATION_SERVICE_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
-            	throw new InvalidParameterException("Missing the value for "+I2B2_INTEGRATION_SERVICE_URL_NAME+" property in"+CONFIG_PATHNAME+".Please configure it.");
+            	 log.error("Missing the value for property "+I2B2_SERVICES_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
+            	throw new InvalidParameterException("Missing the value for "+I2B2_SERVICES_URL_NAME+" property in"+CONFIG_PATHNAME+".Please configure it.");
             }
             fr.close();
             fr = null;
@@ -91,7 +91,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	}
 	
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
-	    + "service=" + URLEncoder.encode(appProperties.getProperty(I2B2_INTEGRATION_SERVICE_URL_NAME) +request.getRequestURI().toString(), "UTF-8")
+	    + "service=" + URLEncoder.encode(appProperties.getProperty(I2B2_SERVICES_URL_NAME) +request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
 	log.debug("CAS validation address: " + addr);
 	
