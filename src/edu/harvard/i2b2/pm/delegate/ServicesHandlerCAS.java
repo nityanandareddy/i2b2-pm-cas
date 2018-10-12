@@ -41,7 +41,8 @@ import org.apache.axis2.context.MessageContext;
 public class ServicesHandlerCAS extends ServicesHandler {
     private static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
     private static final String CAS_URL_PROPERTY_NAME = "cas.url";
-    private static final String I2B2_SERVICES_URL_NAME = "i2b2.services.url";
+    private static final String I2B2_SERVICES_URL_NAME = "i2b2.services.";
+    private static final String I2B2_SERVICES_DEFAULR_URL = "https://i2b2srvsqa1.cc.emory.edu/";
     private static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
     private static final Properties appProperties = new Properties();
     
@@ -56,10 +57,13 @@ public class ServicesHandlerCAS extends ServicesHandler {
             } else if (!readCasUrl.endsWith("/")) {
                 appProperties.setProperty(CAS_URL_PROPERTY_NAME, readCasUrl + "/");
             }
-            if(i2b2ServicesUrl == null || i2b2ServicesUrl.isEmpty())
+            if(i2b2ServicesUrl == null)
             {
-            	 log.error("Missing the value for property "+I2B2_SERVICES_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
-            	throw new InvalidParameterException("Missing the value for "+I2B2_SERVICES_URL_NAME+" property in"+CONFIG_PATHNAME+".Please configure it.");
+            	 appProperties.setProperty(I2B2_SERVICES_URL_NAME, I2B2_SERVICES_DEFAULR_URL);
+            }else if (!readCasUrl.endsWith("/")) {
+            	appProperties.setProperty(I2B2_SERVICES_URL_NAME, readCasUrl + "/");
+            	 /*log.error("Missing the value for property "+I2B2_SERVICES_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
+            	throw new InvalidParameterException("Missing the value for "+I2B2_SERVICES_URL_NAME+" property in"+CONFIG_PATHNAME+".Please configure it.");*/
             }
             fr.close();
             fr = null;
