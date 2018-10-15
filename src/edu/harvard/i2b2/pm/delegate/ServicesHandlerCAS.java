@@ -97,7 +97,9 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode(appProperties.getProperty(I2B2_SERVICES_URL_NAME) +request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
-	log.debug("CAS validation address: " + addr);
+	log.info("CAS validation address: " + addr);
+	System.out.println("+++++addr+++++"+addr);
+	System.out.println("appProperties.getProperty(I2B2_SERVICES_URL_NAME)"+appProperties.getProperty(I2B2_SERVICES_URL_NAME));
 	
 	BufferedReader body = URLOpener.open(addr);
         try {
