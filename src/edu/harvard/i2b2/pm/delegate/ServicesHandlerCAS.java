@@ -59,9 +59,12 @@ public class ServicesHandlerCAS extends ServicesHandler {
             }
             if(i2b2ServicesUrl == null)
             {
+            	log.info("Inside null condition");
             	 appProperties.setProperty(I2B2_SERVICES_URL_NAME, I2B2_SERVICES_DEFAULR_URL);
-            }else if (!readCasUrl.endsWith("/")) {
-            	appProperties.setProperty(I2B2_SERVICES_URL_NAME, readCasUrl + "/");
+            }else if (!i2b2ServicesUrl.endsWith("/")) {
+            	log.info("Inside else condition");
+            	appProperties.setProperty(I2B2_SERVICES_URL_NAME, i2b2ServicesUrl + "/");
+            	
             	 /*log.error("Missing the value for property "+I2B2_SERVICES_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
             	throw new InvalidParameterException("Missing the value for "+I2B2_SERVICES_URL_NAME+" property in"+CONFIG_PATHNAME+".Please configure it.");*/
             }
