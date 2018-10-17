@@ -110,6 +110,8 @@ public class ServicesHandlerCAS extends ServicesHandler {
 		builder.append(line);
 	    }
 	    String response = builder.toString();
+	    System.out.println("Response:+"+response);
+	    log.info("Response:+"+response);
 	    int start = response.indexOf("<cas:authenticationSuccess");
 	    String username;
 	    if (start > -1) {
