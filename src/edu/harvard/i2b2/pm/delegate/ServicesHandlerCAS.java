@@ -42,7 +42,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
     private static final String CONFIG_PATHNAME="/etc/eureka/application.properties";
     private static final String CAS_URL_PROPERTY_NAME = "cas.url";
     private static final String I2B2_SERVICES_URL_NAME = "i2b2.services.url";
-    private static final String I2B2_SERVICES_DEFAULR_URL = "http://i2b2srvsqa1.cc.emory.edu:9090/";
+    private static final String I2B2_SERVICES_DEFAULR_URL = "http://localhost:9090/";
     private static final String CAS_DEFAULT_URL = "https://localhost:8443/cas-server/";
     private static final Properties appProperties = new Properties();
     
@@ -59,10 +59,8 @@ public class ServicesHandlerCAS extends ServicesHandler {
             }
             if(i2b2ServicesUrl == null)
             {
-            	log.info("Inside null condition");
             	 appProperties.setProperty(I2B2_SERVICES_URL_NAME, I2B2_SERVICES_DEFAULR_URL);
             }else if (!i2b2ServicesUrl.endsWith("/")) {
-            	log.info("Inside else condition");
             	appProperties.setProperty(I2B2_SERVICES_URL_NAME, i2b2ServicesUrl + "/");
             	
             	 /*log.error("Missing the value for property "+I2B2_SERVICES_URL_NAME+" in"+CONFIG_PATHNAME+".Please configure it.");
