@@ -91,6 +91,9 @@ public class ServicesHandlerCAS extends ServicesHandler {
         }
     
         HttpServletRequest request = (HttpServletRequest) context.getProperty("transport.http.servletRequest");
+        System.out.println("request.getRequestURL():"+request.getRequestURL());
+        System.out.println("request.getQueryString():"+request.getQueryString());
+
 	if (request != null) {
 	    ticket = request.getParameter("ticket");
 	}
