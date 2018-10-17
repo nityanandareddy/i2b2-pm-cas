@@ -50,7 +50,7 @@ public class PMService {
 		p = Pattern.compile(">.+</ns9:set_password>");
 		m = p.matcher(outString);
 		outString = m.replaceAll(">*********</ns9:set_password>");
-		log.debug("Received Request PM Element " + outString);
+		System.out.println("Received Request PM Element " + outString);
 
 		OMElement returnElement = null;
 
@@ -76,8 +76,8 @@ public class PMService {
 
 	        try {
 	            returnElement = MessageFactory.createResponseOMElementFromString(xmlMsg);
-	            log.debug("my pm repsonse is: " + pmDataResponse);
-	            log.debug("my return is: " + returnElement);
+	            System.out.println("my pm repsonse is: " + pmDataResponse);
+	            System.out.println("my return is: " + returnElement);
 	        } catch (XMLStreamException e) {
 	            log.error("Error creating OMElement from response string " +
 	            		pmDataResponse, e);
@@ -160,10 +160,10 @@ public class PMService {
 		p = Pattern.compile(">.+</ns9:set_password>");
 		m = p.matcher(outString);
 		outString = m.replaceAll(">*********</ns9:set_password>");
-		log.debug("Received Request PM Element " + outString);
+		System.out.println("Received Request PM Element " + outString);
 
 		
-		log.debug("Begin getting servicesMsg");
+		System.out.println("Begin getting servicesMsg");
 		ServicesMessage servicesMsg = new ServicesMessage(getPMDataElement.toString());
 		long waitTime = 0;
 
@@ -175,7 +175,7 @@ public class PMService {
 			}
 		}
 
-		log.debug("Completed getting servicesMsg, waittime is: " + waitTime);
+		System.out.println("Completed getting servicesMsg, waittime is: " + waitTime);
 
 		//do PM processing inside thread, so that  
 		// service could sends back message with timeout error.
@@ -184,14 +184,14 @@ public class PMService {
 		try {
 		ExecutorRunnable er = new ExecutorRunnable();
 		//er.setInputString(requestElementString);
-		log.debug("begin setRequestHandler, my servicesMsg: " + servicesMsg);
+		System.out.println("begin setRequestHandler, my servicesMsg: " + servicesMsg);
 
 		//er.setRequestHandler(new ServicesHandler(servicesMsg));
                 er.setRequestHandler(new ServicesHandlerCAS(servicesMsg));
-		log.debug("middle setRequestHandler");
+		System.out.println("middle setRequestHandler");
 		
 		
-		log.debug("end setRequestHandler");
+		System.out.println("end setRequestHandler");
 
 		
 		Thread t = new Thread(er);
@@ -229,7 +229,7 @@ public class PMService {
 						String timeOuterror = "Result waittime millisecond <result_waittime_ms> :" +
 						waitTime +
 						" elapsed, try again with increased value";
-						log.debug(timeOuterror);
+						System.out.println(timeOuterror);
 
 						responseMsgType = MessageFactory.doBuildErrorResponse(null,
 								timeOuterror);
@@ -255,8 +255,8 @@ public class PMService {
         }
         try {
             returnElement = MessageFactory.createResponseOMElementFromString(pmDataResponse);
-            log.debug("my pm repsonse is: " + pmDataResponse);
-            log.debug("my return is: " + returnElement);
+            System.out.println("my pm repsonse is: " + pmDataResponse);
+            System.out.println("my return is: " + returnElement);
         } catch (XMLStreamException e) {
             log.error("Error creating OMElement from response string " +
             		pmDataResponse, e);
