@@ -97,7 +97,7 @@ public class ServicesHandlerCAS extends ServicesHandler {
 	if (request != null) {
 	    ticket = request.getParameter("ticket");
 	}
-	
+	System.out.println("request:"+request.toStirng());
 	String addr = appProperties.getProperty(CAS_URL_PROPERTY_NAME) + "proxyValidate?"
 	    + "service=" + URLEncoder.encode(appProperties.getProperty(I2B2_SERVICES_URL_NAME) +request.getRequestURI().toString(), "UTF-8")
 	    + "&ticket=" + URLEncoder.encode(ticket, "UTF-8");
